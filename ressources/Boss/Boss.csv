@@ -1,0 +1,17 @@
+num_boss;nom;points_de_vie;attaque;lore;chemin_fichier
+0;Premier texte;0;0; se réveilla dans une pièce, visiblement une salle de classe. Le seul souvenir qui lui vint furent les dernières notes qu'iel avait eues, que des zéros, sûrement ce qui lui avait provoqué son coma.;-
+1;Timmy;10;5;Iel entendit un bruit venant de la porte. Iel s'attendait à voir son professeur, mais c'était Timmy. C'était la première fois qu'iel le voyait et iel se demanda qui c'était. Sans perdre de temps, Timmy le.a provoqua en duel.;ressources/Questions/Facile/Timmy.csv
+2;Prof de maths;20;10;Timmy est vaincu, en mourant il dit cette phrase "on se reverra bientôt", bien qu'elle est anodine cette phrase vous reste en tête Vous continuez d'avancer et vous arrivez dans une autre salle, les règles et les équerres indiquent que c'est une salle de maths, un prof vous attend et sans vous laisser de répit il attaqua.;ressources/Questions/Facile/Maths.csv
+3;Prof d'histoire CE1;30;25;Le professeur laisse tomber son goûter ce qui permet de gagner 25 points de vie, en savourant votre goûter, une nouvelle menace apparaît et c’est votre professeur d’histoire de CE1. Vous avez juste le temps de finir votre goûter que le professeur commence à vous harceler de questions.;ressources/Questions/Facile/Histoire.csv
+4;Prof de français;40;20;Suite à vos réponses, le professeur s’en va, sans dire un mot. N’aimant pas vous faire ignorer, vous le poursuivez, mais la route est bloquée par un professeur de français, il vous pose une question !;ressources/Questions/Facile/Francais.csv
+5;Prof principal;50;25;Le professeur part en laissant derrière lui un stylo plume ce qui augmente vos dégâts (5 points de dégâts par attaque). En examinant votre récompense  vous entendez des bruits de pas qui se rapprochent de vous, cette fois si vous sentez que l’adversaire sera plus fort qu’avant. En effet cette fois c’est votre professeur principal (qui est prof de géo) qui débarque dans la pièce. Cette fois votre professeur vous pose des questions de géographie.;ressources/Questions/Facile/Geographie.csv
+6;;;;;ressources/Questions/Moyen
+7;;;;;ressources/Questions/Moyen
+8;;;;;ressources/Questions/Moyen
+9;;;;;ressources/Questions/Moyen
+10;;;;;ressources/Questions/Moyen
+11;;;;;ressources/Questions/Difficile
+12;;;;;ressources/Questions/Difficile
+13;;;;;ressources/Questions/Difficile
+14;;;;;ressources/Questions/Difficile
+15;;;;;ressources/Questions/Difficile
