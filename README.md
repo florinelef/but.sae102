@@ -1,6 +1,6 @@
 # SAE 1.02 - Question à Combat Multiples (QCM)
 
-Développé par Florine Lefebvre Léo Gengembre
+Développé par Florine Lefebvre et Léo Gengembre
 
 Contacts : florine.lefebvre.etu@univ-lille.fr leo.gengembre.etu@univ-lille.fr
 
