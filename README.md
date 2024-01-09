@@ -1,8 +1,10 @@
 # SAE 1.02 - Question à Combat Multiples (QCM)
-==========
 
 Développé par Florine Lefebvre Léo Gengembre
+
 Contacts : florine.lefebvre.etu@univ-lille.fr leo.gengembre.etu@univ-lille.fr
+
+---
 
 ## Présentatinon de Question à Combat Multiples
 
@@ -12,8 +14,7 @@ On suit l’histoire d’un cancre (nous) qui souhaite devenir meilleur à l’�
 
 Afin d'utiliser le projet, il suffit de taper les commandes suivantes dans un terminal:
 
----
-
 ./compile.sh (compile le jeu)
+--
 ./run.sh (lance le jeu)
 --
