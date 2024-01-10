@@ -181,7 +181,7 @@ class QuestionACombatMultiples extends Program {
     }
 
 //---------------------
-// -> Affichage stats
+// -> Affichage
 //---------------------
 
     void statsJ(Joueur j){
@@ -192,125 +192,146 @@ class QuestionACombatMultiples extends Program {
         println(toString(b));
     }
 
+    void afficherMenu(){
+        println("Question à combat multiples !\n\n\n1 - Jouer\n2 - Règles\n3 - Quitter\n\n\nRéponse : ");
+    }
+
+    void afficherRegles(){
+        println("Règles !!!");
+    }
+
 //-------------------------
 // -> Algorithme principal
 //-------------------------
 
     void algorithm() {
-
-        clearScreen();
-
-        print("Question à combat multiples !\n\nQuel est votre prénom ?\n> ");
-        String prenom = readString();
-
-        //éviter d'avoir un prénom vide
-        if(equals(prenom, "")){
-            prenom = "Florine";
-        }
-
-        //Mettre le prénom en gras et en blanc
-        prenom = "\033[1;37m" + prenom + ANSI_RESET;
-
-        //Création du/de la joueur.euse et affichage du texte introductif
-        Joueur joueur = newJoueur(prenom);
-
-        println();
-        println(prenom + getCell(loadCSV(CHEMIN_BOSS, SEPARATEUR), 1,4));
+        boolean quitter = false;
         
-        Boss[] listeBoss = csvToBossTab(CHEMIN_BOSS);
-
-
-        //boucle principale
-        int tour = 0;
-        while(tour < NB_BOSS && joueur.stats[0] > 0){
-
-            //enchainement de conditions pour les evenements
-            if(tour == 2){
-                joueur.stats[0] += 25;
-            }
-            if(tour == 4){
-                joueur.stats[1] += 5;
-            }
-
-
-            Boss boss = listeBoss[tour];
-            Question[] questions = csvToQuestionTab(boss.cheminFichier);
-
-            println(boss.lore);
-
-            //tant que le boss ou lae joueur.euse
-            do{
-                boolean resetStreak = false;
-                //afficher stats
-                println();
-                statsJ(joueur);
-                statsB(boss);
-                println('\n' + boss.nom + " vous pose une question :");
-
-                //a faire condition perdre vie, gerer streak, actualiser vie et att etc
-                //cas : plus aucune question dispo
-                int resultat = poserQuestion(questions);
-                println();
-                if(resultat == -1){
-                    println(MESSAGE_AUCUNE_QUESTION);
-                    boss.pdv = 0;
-                } 
-                //cas : réponse fausse
-                else if(resultat == 0){
-                    println(MESSAGE_MAUVAISE_REPONSE);
-                    joueur.stats[2] = 0; //reset streak
-                    joueur.score -= 50; //actualisation score
-
-                    joueur.stats[0] -= boss.att;
-                    println("Vous avez perdu " + boss.att + ANSI_RED + " PV" + ANSI_WHITE);
-                }
-                //cas : réponse bonne
-                else if(resultat == 1){
-                    println(MESSAGE_BONNE_REPONSE);
-
-                    joueur.stats[2] += 1; //ajout 1 streak
-                    joueur.score += 20; //actualisation score
-
-                    if(coupCritique()){
-                        println(MESSAGE_COUP_CRITIQUE);
-                        boss.pdv -= (joueur.stats[1] * CM_CRIT);
-                        println("Le boss a perdu " + (joueur.stats[1] * CM_CRIT) + ANSI_RED + " PV" + ANSI_WHITE);
-                    } else {
-                        boss.pdv -= joueur.stats[1];
-                        println("Le boss a perdu " + joueur.stats[1] + ANSI_RED + " PV" + ANSI_WHITE);
-                    }
-                } 
-                
-                //cas : skip
-                else {
-                    println("SKIP effectué");
-                    boss.pdv = 0;
-                }
-
-            } while(boss.pdv > 0 && joueur.stats[0] > 0);
-
-            //fin de tour
-            if(bonus()){
-                println(MESSAGE_BONUS);
-                joueur.stats[0] += 25;
-            }
-
-            joueur.score += 100;
-            tour = tour + 1;
-            joueur.stats[1] += joueur.stats[2];
-
-            println("\nAppuyez sur entrée pour continuer");
-            readString();
+        while(!quitter){
             clearScreen();
-        }
 
-        println("\n\n\n\n\n\n\n\n");
+            afficherMenu();
+            String choix = readString();
 
-        if(joueur.stats[0] <= 0){
-            println("Vous êtes mort...");
-        } else {
-            println("Fin du jeu, vous avez battu les boss bien joué !");
-            statsJ(joueur);
+
+            if(equals(choix, "1") || equals(choix, "Jouer")){
+                print("Quel est votre prénom ?\n> ");
+                String prenom = readString();
+
+                //éviter d'avoir un prénom vide
+                if(equals(prenom, "")){
+                    prenom = "Florine";
+                }
+
+                //Mettre le prénom en gras et en blanc
+                prenom = "\033[1;37m" + prenom + ANSI_RESET;
+
+                //Création du/de la joueur.euse et affichage du texte introductif
+                Joueur joueur = newJoueur(prenom);
+
+                println();
+                println(prenom + getCell(loadCSV(CHEMIN_BOSS, SEPARATEUR), 1,4));
+                
+                Boss[] listeBoss = csvToBossTab(CHEMIN_BOSS);
+
+
+                //boucle principale
+                int tour = 0;
+                while(tour < NB_BOSS && joueur.stats[0] > 0){
+
+                    //enchainement de conditions pour les evenements
+                    if(tour == 2){
+                        joueur.stats[0] += 25;
+                    }
+                    if(tour == 4){
+                        joueur.stats[1] += 5;
+                    }
+
+
+                    Boss boss = listeBoss[tour];
+                    Question[] questions = csvToQuestionTab(boss.cheminFichier);
+
+                    println(boss.lore);
+
+                    //tant que le boss ou lae joueur.euse
+                    do{
+                        boolean resetStreak = false;
+                        //afficher stats
+                        println();
+                        statsJ(joueur);
+                        statsB(boss);
+                        println('\n' + boss.nom + " vous pose une question :");
+
+                        //a faire condition perdre vie, gerer streak, actualiser vie et att etc
+                        //cas : plus aucune question dispo
+                        int resultat = poserQuestion(questions);
+                        println();
+                        if(resultat == -1){
+                            println(MESSAGE_AUCUNE_QUESTION);
+                            boss.pdv = 0;
+                        } 
+                        //cas : réponse fausse
+                        else if(resultat == 0){
+                            println(MESSAGE_MAUVAISE_REPONSE);
+                            joueur.stats[2] = 0; //reset streak
+                            joueur.score -= 50; //actualisation score
+
+                            joueur.stats[0] -= boss.att;
+                            println("Vous avez perdu " + boss.att + ANSI_RED + " PV" + ANSI_WHITE);
+                        }
+                        //cas : réponse bonne
+                        else if(resultat == 1){
+                            println(MESSAGE_BONNE_REPONSE);
+
+                            joueur.stats[2] += 1; //ajout 1 streak
+                            joueur.score += 20; //actualisation score
+
+                            if(coupCritique()){
+                                println(MESSAGE_COUP_CRITIQUE);
+                                boss.pdv -= (joueur.stats[1] * CM_CRIT);
+                                println("Le boss a perdu " + (joueur.stats[1] * CM_CRIT) + ANSI_RED + " PV" + ANSI_WHITE);
+                            } else {
+                                boss.pdv -= joueur.stats[1];
+                                println("Le boss a perdu " + joueur.stats[1] + ANSI_RED + " PV" + ANSI_WHITE);
+                            }
+                        } 
+                        
+                        //cas : skip
+                        else {
+                            println("SKIP effectué");
+                            boss.pdv = 0;
+                        }
+
+                    } while(boss.pdv > 0 && joueur.stats[0] > 0);
+
+                    //fin de tour
+                    if(bonus()){
+                        println(MESSAGE_BONUS);
+                        joueur.stats[0] += 25;
+                    }
+
+                    joueur.score += 100;
+                    tour = tour + 1;
+                    joueur.stats[1] += joueur.stats[2];
+
+                    println("\nAppuyez sur entrée pour continuer");
+                    readString();
+                    clearScreen();
+                }
+
+                println("\n\n\n\n\n\n\n\n");
+
+                if(joueur.stats[0] <= 0){
+                    println("Vous êtes mort...");
+                } else {
+                    println("Fin du jeu, vous avez battu les boss bien joué !");
+                    statsJ(joueur);
+                }
+            } else if(equals(choix, "2")){
+                afficherRegles();
+            } else if(equals(choix, "3")){
+                quitter = true;
+            }
         }
     }
 }
