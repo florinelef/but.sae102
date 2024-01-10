@@ -193,7 +193,7 @@ class QuestionACombatMultiples extends Program {
     }
 
     void afficherMenu(){
-        println("Question à combat multiples !\n\n\n1 - Jouer\n2 - Règles\n3 - Quitter\n\n\nRéponse : ");
+        print("Question à combat multiples !\n\n\n1 - Jouer\n2 - Règles\n3 - Quitter\n\n\nRéponse : ");
     }
 
     void afficherRegles(){
@@ -328,7 +328,9 @@ class QuestionACombatMultiples extends Program {
                     statsJ(joueur);
                 }
             } else if(equals(choix, "2")){
+                clearScreen();
                 afficherRegles();
+                readString();
             } else if(equals(choix, "3")){
                 quitter = true;
             }
