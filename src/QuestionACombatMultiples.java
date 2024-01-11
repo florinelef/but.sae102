@@ -25,7 +25,7 @@ class QuestionACombatMultiples extends Program {
     final String MESSAGE_MAUVAISE_REPONSE = ANSI_RED + "Mauvaise réponse !\n" + ANSI_RESET;
     final String MESSAGE_BONNE_REPONSE = ANSI_GREEN + "Bonne réponse !\n" + ANSI_RESET;
     final String MESSAGE_COUP_CRITIQUE = ANSI_YELLOW + "Coup critique !\n" + ANSI_RESET;
-    final String MESSAGE_BONUS = "Vous trouvez un blanc co pour effacer vos blessures, vous regagnez 25 PV.";
+    final String MESSAGE_BONUS = ANSI_GREEN + "Vous trouvez un blanc co pour effacer vos blessures, vous regagnez 25 PV." + ANSI_RESET;
 
     final String MOT_SKIP = "dbgskp";
 
@@ -208,7 +208,7 @@ class QuestionACombatMultiples extends Program {
     void afficherNouvellePartie(){
         CSVFile save = loadCSV(CHEMIN_SAVE);
 
-        print("Voulez vous continuer la partie ?\n\n\n1 - Continuer ");
+        print("Voulez vous continuer la partie ?\n\n\n1 - Continuer : ");
         println(
             getCell(save, 1, 0)
             + " - Boss n°"
@@ -245,19 +245,19 @@ class QuestionACombatMultiples extends Program {
     }
 
     String chargerPrenom(CSVFile save){
-        return "";
+        return getCell(save, 1, 0);
     }
 
     int[] chargerStats(CSVFile save){
-        return new int[0];
+        return new int[]{stringToInt(getCell(save, 1, 1)), stringToInt(getCell(save, 1, 2)), stringToInt(getCell(save, 1, 3))};
     }
 
     int chargerScore(CSVFile save){
-        return 0;
+        return stringToInt(getCell(save, 1, 4));
     }
 
     int chargerTour(CSVFile save){
-        return 0;
+        return stringToInt(getCell(save, 1, 5));
     }
 
 //-------------------------
@@ -277,7 +277,10 @@ class QuestionACombatMultiples extends Program {
             if(equals(choix, "1") || equals(choix, "Jouer")){
 
                 afficherNouvellePartie();
+                String choix2 = readString();
 
+                int tour;
+                Joueur joueur = new Joueur();
                 //cas : nouvelle partie
                 if(equals(choix2, "2") || equals(choix2, "Nouvelle Partie")){
                     print("Quel est votre prénom ?\n> ");
@@ -292,18 +295,19 @@ class QuestionACombatMultiples extends Program {
                     prenom = "\033[1;37m" + prenom + ANSI_RESET;
 
                     //Création du/de la joueur.euse, première sauvegarde et affichage du texte introductif
-                    Joueur joueur = newJoueur(prenom);
+                    joueur = newJoueur(prenom);
                     sauvegarder(joueur, 0);
 
                     println();
                     println(prenom + getCell(loadCSV(CHEMIN_BOSS, SEPARATEUR), 1,4));
-                    int tour = 0;
+                    tour = 0;
                 } 
                 
                 //cas : continuer la partie
                 else {
-                    Joueur joueur = newJoueurContinue(chargerPrenom, chargerStats, chargerScore);
-                    int tour = chargerTour;
+                    CSVFile save = loadCSV(CHEMIN_SAVE);
+                    joueur = newJoueurContinue(chargerPrenom(save), chargerStats(save), chargerScore(save));
+                    tour = chargerTour(save);
                 }
 
                 //importation des boss
