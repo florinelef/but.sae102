@@ -25,7 +25,7 @@ class QuestionACombatMultiples extends Program {
     final String MESSAGE_MAUVAISE_REPONSE = ANSI_RED + "Mauvaise réponse !\n" + ANSI_RESET;
     final String MESSAGE_BONNE_REPONSE = ANSI_GREEN + "Bonne réponse !\n" + ANSI_RESET;
     final String MESSAGE_COUP_CRITIQUE = ANSI_YELLOW + "Coup critique !\n" + ANSI_RESET;
-    final String MESSAGE_BONUS = "Vous trouvez un blanc co pour réparer vos blessures, vous regagnez 25 PV.";
+    final String MESSAGE_BONUS = "Vous trouvez un blanc co pour effacer vos blessures, vous regagnez 25 PV.";
 
     final String MOT_SKIP = "dbgskp";
 
@@ -322,6 +322,16 @@ class QuestionACombatMultiples extends Program {
                     }
                     if(tour == 5){
                         joueur.stats[0] += 40;
+                    }
+                    if(tour == 10){
+                        joueur.stats[1] += 50;
+                    }
+                    if(tour == 13){
+                        joueur.stats[1] += 70;
+                        joueur.stats[0] += 70;
+                    }
+                    if(tour == 14){
+                        joueur.stats[0] = joueur.stats[0]/2;
                     }
 
 
