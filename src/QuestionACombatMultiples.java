@@ -1,5 +1,4 @@
 import extensions.CSVFile;
-import extensions.File;
 
 class QuestionACombatMultiples extends Program {
 
@@ -20,6 +19,7 @@ class QuestionACombatMultiples extends Program {
 
     //pour les fichiers CSV
     final char SEPARATEUR = ';';
+    final String CHEMIN_SAVE = "ressources/Save/save.csv";
     final String CHEMIN_BOSS = "ressources/Boss/Boss.csv";
     final String MESSAGE_AUCUNE_QUESTION = "Le boss est mort d'inspiration car il n'avait plus de question à vous poser";
     final String MESSAGE_MAUVAISE_REPONSE = ANSI_RED + "Mauvaise réponse !\n" + ANSI_RESET;
@@ -74,6 +74,14 @@ class QuestionACombatMultiples extends Program {
         j.prenom = prenom;
         j.stats = new int[]{VIES_JOUEUR, ATT_JOUEUR, STREAK_JOUEUR};
         j.score = 0;
+        return j;
+    }
+
+    Joueur newJoueurContinue(String prenom, int[] stats, int score){
+        Joueur j = new Joueur();
+        j.prenom = prenom;
+        j.stats = stats;
+        j.score = score;
         return j;
     }
 
@@ -198,13 +206,58 @@ class QuestionACombatMultiples extends Program {
     }
 
     void afficherNouvellePartie(){
-        println("Voulez vous continuer la partie ?\n\n\n1 - Continuer ");
+        CSVFile save = loadCSV(CHEMIN_SAVE);
 
-        print("\n2 - Nouvelle Partie\n\n\nRéponse : ");
+        print("Voulez vous continuer la partie ?\n\n\n1 - Continuer ");
+        println(
+            getCell(save, 1, 0)
+            + " - Boss n°"
+            + getCell(save, 1, 5)
+            + " : Points de vie "
+            + getCell(save, 1, 1)
+            + " / Attaque "
+            + getCell(save, 1, 2)
+            + " / Combo "
+            + getCell(save, 1, 3)
+            + " (score : "
+            + getCell(save, 1, 4)
+            + ")"
+        );
+        print("2 - Nouvelle Partie\n\n\nRéponse : ");
     }
 
     void afficherRegles(){
         println("Règles !!!");
+    }
+
+//----------------
+// -> Sauvegarde
+//----------------
+
+    void sauvegarder(Joueur joueur, int tour){
+
+        String[][] sauvegarde = new String[][]{
+            {"prenom","PV","ATT","streak","score","tour"},
+            {joueur.prenom, ""+joueur.stats[0], ""+joueur.stats[1], ""+joueur.stats[2], ""+joueur.score, ""+tour}
+        };
+
+        saveCSV(sauvegarde, CHEMIN_SAVE);
+    }
+
+    String chargerPrenom(CSVFile save){
+        return "";
+    }
+
+    int[] chargerStats(CSVFile save){
+        return new int[0];
+    }
+
+    int chargerScore(CSVFile save){
+        return 0;
+    }
+
+    int chargerTour(CSVFile save){
+        return 0;
     }
 
 //-------------------------
@@ -220,30 +273,44 @@ class QuestionACombatMultiples extends Program {
             afficherMenu();
             String choix = readString();
 
-
+            clearScreen();
             if(equals(choix, "1") || equals(choix, "Jouer")){
-                print("Quel est votre prénom ?\n> ");
-                String prenom = readString();
 
-                //éviter d'avoir un prénom vide
-                if(equals(prenom, "")){
-                    prenom = "Florine";
+                afficherNouvellePartie();
+
+                //cas : nouvelle partie
+                if(equals(choix2, "2") || equals(choix2, "Nouvelle Partie")){
+                    print("Quel est votre prénom ?\n> ");
+                    String prenom = readString();
+
+                    //éviter d'avoir un prénom vide
+                    if(equals(prenom, "")){
+                        prenom = "Florine";
+                    }
+
+                    //Mettre le prénom en gras et en blanc
+                    prenom = "\033[1;37m" + prenom + ANSI_RESET;
+
+                    //Création du/de la joueur.euse, première sauvegarde et affichage du texte introductif
+                    Joueur joueur = newJoueur(prenom);
+                    sauvegarder(joueur, 0);
+
+                    println();
+                    println(prenom + getCell(loadCSV(CHEMIN_BOSS, SEPARATEUR), 1,4));
+                    int tour = 0;
+                } 
+                
+                //cas : continuer la partie
+                else {
+                    Joueur joueur = newJoueurContinue(chargerPrenom, chargerStats, chargerScore);
+                    int tour = chargerTour;
                 }
 
-                //Mettre le prénom en gras et en blanc
-                prenom = "\033[1;37m" + prenom + ANSI_RESET;
-
-                //Création du/de la joueur.euse et affichage du texte introductif
-                Joueur joueur = newJoueur(prenom);
-
-                println();
-                println(prenom + getCell(loadCSV(CHEMIN_BOSS, SEPARATEUR), 1,4));
-                
+                //importation des boss
                 Boss[] listeBoss = csvToBossTab(CHEMIN_BOSS);
 
 
-                //boucle principale
-                int tour = 0;
+                //boucle principale                
                 while(tour < NB_BOSS && joueur.stats[0] > 0){
 
                     //enchainement de conditions pour les evenements
@@ -252,6 +319,9 @@ class QuestionACombatMultiples extends Program {
                     }
                     if(tour == 4){
                         joueur.stats[1] += 5;
+                    }
+                    if(tour == 5){
+                        joueur.stats[0] += 40;
                     }
 
 
@@ -321,23 +391,33 @@ class QuestionACombatMultiples extends Program {
                     tour = tour + 1;
                     joueur.stats[1] += joueur.stats[2];
 
-                    println("\nAppuyez sur entrée pour continuer");
-                    readString();
+                    println("\nAppuyez sur entrée pour continuer, sinon écrivez \"quitter\" pour sauvegarder et arrêter !\n> ");
+                    if(equals(readString(), "quitter")){
+                        sauvegarder(joueur, tour);
+                        quitter = true;
+                        tour = NB_BOSS + 1; //faire quitter la boucle en invalidant la condition (le tour ayant déjà été sauvegardé, on peut le modifier)
+                    }
                     clearScreen();
                 }
 
-                println("\n\n\n\n\n\n\n\n");
+                if(!quitter){
+                    clearScreen();
 
-                if(joueur.stats[0] <= 0){
-                    println("Vous êtes mort...");
-                } else {
-                    println("Fin du jeu, vous avez battu les boss bien joué !");
-                    statsJ(joueur);
+                    if(joueur.stats[0] <= 0){
+                        println("Vous êtes mort...");
+                    } else {
+                        println("Fin du jeu, vous avez battu les boss bien joué !");
+                        statsJ(joueur);
+                    }
                 }
+
+
+            //Regles
             } else if(equals(choix, "2")){
-                clearScreen();
                 afficherRegles();
                 readString();
+
+            //Quitter
             } else if(equals(choix, "3")){
                 quitter = true;
             }
