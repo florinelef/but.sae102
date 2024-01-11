@@ -1,4 +1,5 @@
 import extensions.CSVFile;
+import extensions.File;
 
 class QuestionACombatMultiples extends Program {
 
@@ -194,6 +195,12 @@ class QuestionACombatMultiples extends Program {
 
     void afficherMenu(){
         print("Question à combat multiples !\n\n\n1 - Jouer\n2 - Règles\n3 - Quitter\n\n\nRéponse : ");
+    }
+
+    void afficherNouvellePartie(){
+        println("Voulez vous continuer la partie ?\n\n\n1 - Continuer ");
+
+        print("\n2 - Nouvelle Partie\n\n\nRéponse : ");
     }
 
     void afficherRegles(){
