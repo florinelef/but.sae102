@@ -314,7 +314,8 @@ class QuestionACombatMultiples extends Program {
                 Boss[] listeBoss = csvToBossTab(CHEMIN_BOSS);
 
 
-                //boucle principale                
+                //boucle principale
+                clearScreen();              
                 while(tour < NB_BOSS && joueur.stats[0] > 0){
 
                     //enchainement de conditions pour les evenements
