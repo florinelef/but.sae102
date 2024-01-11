@@ -202,6 +202,14 @@ class QuestionACombatMultiples extends Program {
     }
 
     void afficherMenu(){
+        println(" _______    _______    _______ ");
+        println("(  ___  )  (  ____ \\  (       )");
+        println("| (   ) |  | (    \\/  | () () |");
+        println("| |   | |  | |        | || || |");
+        println("| |   | |  | |        | ||_|| |");
+        println("| | /\\| |  | |        | |   | |");
+        println("| (_\\ \\ |  | (____/\\  | )   ( |");
+        println("(____\\/_)  (_______/  |/     \\|");
         print("Question à combat multiples !\n\n\n1 - Jouer\n2 - Règles\n3 - Quitter\n\n\nRéponse : ");
     }
 
@@ -228,6 +236,20 @@ class QuestionACombatMultiples extends Program {
 
     void afficherRegles(){
         println("Règles !!!");
+    }
+
+    void afficherVictoire(){
+        println(
+            "Après un dur combat qui à duré plusieurs jours, vous sortez victorieux de cet affrontement, mais vous êtes très mal en point. Votre vision se trouble, vous êtes à bout de souffle, sur le point de vous effondrez, mais vous entendez une voix au loin : \"Accroche toi !\". Cette voix est si douce et apaisante que vous ne flanchez pas ! Vous trouvez les dernières forces pour vous relever et aller vers la porte. Vous l’ouvrez et une lumière intense apparaît, vous éblouissant. Vous vous réveillez en sursaut de votre lit, même si tout cela n’était qu’un rêve cela vous a fait prendre conscience qu’il est important de travailler et à partir de maintenant vous allez tout donner pour réussir vos études.\n"
+        );
+        println("         _________ _______ _________ _______ _________ _______  _______ ");
+        println("|\\     /|\\__   __/(  ____ \\\\__   __/(  ___  )\\__   __/(  ____ )(  ____ \\");
+        println("| )   ( |   ) (   | (    \\/   ) (   | (   ) |   ) (   | (    )|| (    \\/");
+        println("| |   | |   | |   | |         | |   | |   | |   | |   | (____)|| (__");
+        println("( (   ) )   | |   | |         | |   | |   | |   | |   |     __)|  __)");
+        println(" \\ \\_/ /    | |   | |         | |   | |   | |   | |   | (\\ (   | (      ");
+        println("  \\   /  ___) (___| (____/\\   | |   | (___) |___) (___| ) \\ \\__| (____/\\");
+        println("   \\_/   \\_______/(_______/   )_(   (_______)\\_______/|/   \\__/(_______/");
     }
 
 //----------------
@@ -418,16 +440,18 @@ class QuestionACombatMultiples extends Program {
                     clearScreen();
                 }
 
+                //fin du jeu (la condition permet de ne pas finir le jeu lorsqu'on souhaite quitter en pleine partie)
                 if(!quitter){
                     clearScreen();
 
                     if(joueur.stats[0] <= 0){
-                        println("Vous êtes mort...");
+                        println("La partie est finieVous êtes mort...");
                     } else {
-                        println("Fin du jeu, vous avez battu les boss bien joué !");
+                        afficherVictoire();
                         statsJ(joueur);
                     }
 
+                    println("\nAppuyez sur entrée pour continuer");
                     readString();
                 }
 
