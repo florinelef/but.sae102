@@ -1,4 +1,5 @@
 import extensions.CSVFile;
+import extensions.File;
 
 class QuestionACombatMultiples extends Program {
 
@@ -21,6 +22,7 @@ class QuestionACombatMultiples extends Program {
     final char SEPARATEUR = ';';
     final String CHEMIN_SAVE = "ressources/Save/save.csv";
     final String CHEMIN_BOSS = "ressources/Boss/Boss.csv";
+    final String CHEMIN_REPERTOIRE_TEXTES = "ressources/Textes/";
     final String MESSAGE_AUCUNE_QUESTION = "Le boss est mort d'inspiration car il n'avait plus de question à vous poser";
     final String MESSAGE_MAUVAISE_REPONSE = ANSI_RED + "Mauvaise réponse !\n" + ANSI_RESET;
     final String MESSAGE_BONNE_REPONSE = ANSI_GREEN + "Bonne réponse !\n" + ANSI_RESET;
@@ -201,16 +203,11 @@ class QuestionACombatMultiples extends Program {
         println(toString(b));
     }
 
-    void afficherMenu(){
-        println(" _______    _______    _______ ");
-        println("(  ___  )  (  ____ \\  (       )");
-        println("| (   ) |  | (    \\/  | () () |");
-        println("| |   | |  | |        | || || |");
-        println("| |   | |  | |        | ||_|| |");
-        println("| | /\\| |  | |        | |   | |");
-        println("| (_\\ \\ |  | (____/\\  | )   ( |");
-        println("(____\\/_)  (_______/  |/     \\|");
-        print("Question à combat multiples !\n\n\n1 - Jouer\n2 - Règles\n3 - Quitter\n\n\nRéponse : ");
+    void afficher(String chemin_court){
+        File f = newFile(CHEMIN_REPERTOIRE_TEXTES + chemin_court);
+        while(ready(f)){
+            println(readLine(f));
+        }
     }
 
     void afficherNouvellePartie(){
@@ -232,24 +229,6 @@ class QuestionACombatMultiples extends Program {
             + ")"
         );
         print("2 - Nouvelle Partie\n\n\nRéponse : ");
-    }
-
-    void afficherRegles(){
-        println("Règles !!!");
-    }
-
-    void afficherVictoire(){
-        println(
-            "Après un dur combat qui à duré plusieurs jours, vous sortez victorieux de cet affrontement, mais vous êtes très mal en point. Votre vision se trouble, vous êtes à bout de souffle, sur le point de vous effondrez, mais vous entendez une voix au loin : \"Accroche toi !\". Cette voix est si douce et apaisante que vous ne flanchez pas ! Vous trouvez les dernières forces pour vous relever et aller vers la porte. Vous l’ouvrez et une lumière intense apparaît, vous éblouissant. Vous vous réveillez en sursaut de votre lit, même si tout cela n’était qu’un rêve cela vous a fait prendre conscience qu’il est important de travailler et à partir de maintenant vous allez tout donner pour réussir vos études.\n"
-        );
-        println("         _________ _______ _________ _______ _________ _______  _______ ");
-        println("|\\     /|\\__   __/(  ____ \\\\__   __/(  ___  )\\__   __/(  ____ )(  ____ \\");
-        println("| )   ( |   ) (   | (    \\/   ) (   | (   ) |   ) (   | (    )|| (    \\/");
-        println("| |   | |   | |   | |         | |   | |   | |   | |   | (____)|| (__");
-        println("( (   ) )   | |   | |         | |   | |   | |   | |   |     __)|  __)");
-        println(" \\ \\_/ /    | |   | |         | |   | |   | |   | |   | (\\ (   | (      ");
-        println("  \\   /  ___) (___| (____/\\   | |   | (___) |___) (___| ) \\ \\__| (____/\\");
-        println("   \\_/   \\_______/(_______/   )_(   (_______)\\_______/|/   \\__/(_______/");
     }
 
 //----------------
@@ -292,7 +271,7 @@ class QuestionACombatMultiples extends Program {
         while(!quitter){
             clearScreen();
 
-            afficherMenu();
+            afficher("menu");
             String choix = readString();
 
             clearScreen();
@@ -300,6 +279,7 @@ class QuestionACombatMultiples extends Program {
 
                 afficherNouvellePartie();
                 String choix2 = readString();
+                clearScreen();
 
                 int tour;
                 Joueur joueur = new Joueur();
@@ -336,8 +316,7 @@ class QuestionACombatMultiples extends Program {
                 Boss[] listeBoss = csvToBossTab(CHEMIN_BOSS);
 
 
-                //boucle principale
-                clearScreen();              
+                //boucle principale            
                 while(tour < NB_BOSS && joueur.stats[0] > 0){
 
                     //enchainement de conditions pour les evenements
@@ -387,6 +366,7 @@ class QuestionACombatMultiples extends Program {
                         //cas : réponse fausse
                         else if(resultat == 0){
                             println(MESSAGE_MAUVAISE_REPONSE);
+                            
                             joueur.stats[2] = 0; //reset streak
                             joueur.score -= 50; //actualisation score
 
@@ -445,9 +425,9 @@ class QuestionACombatMultiples extends Program {
                     clearScreen();
 
                     if(joueur.stats[0] <= 0){
-                        println("La partie est finieVous êtes mort...");
+                        afficher("defaite");
                     } else {
-                        afficherVictoire();
+                        afficher("victoire");
                         statsJ(joueur);
                     }
 
@@ -458,7 +438,7 @@ class QuestionACombatMultiples extends Program {
 
             //Regles
             } else if(equals(choix, "2")){
-                afficherRegles();
+                afficher("regles");
                 readString();
 
             //Quitter
