@@ -407,8 +407,11 @@ class QuestionACombatMultiples extends Program {
                     joueur.stats[1] += joueur.stats[2];
 
                     println("\nAppuyez sur entrée pour continuer, sinon écrivez \"quitter\" pour sauvegarder et arrêter !\n> ");
+                    
+                    //sauvegarde
+                    sauvegarder(joueur, tour);
+
                     if(equals(readString(), "quitter")){
-                        sauvegarder(joueur, tour);
                         quitter = true;
                         tour = NB_BOSS + 1; //faire quitter la boucle en invalidant la condition (le tour ayant déjà été sauvegardé, on peut le modifier)
                     }
@@ -424,6 +427,8 @@ class QuestionACombatMultiples extends Program {
                         println("Fin du jeu, vous avez battu les boss bien joué !");
                         statsJ(joueur);
                     }
+
+                    readString();
                 }
 
 
