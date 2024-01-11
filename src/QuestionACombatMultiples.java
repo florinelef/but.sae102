@@ -16,7 +16,7 @@ class QuestionACombatMultiples extends Program {
 
     final int CM_CRIT = 2;
 
-    final int NB_BOSS = 5; //Par défaut : 15 - Pour l'alpha
+    final int NB_BOSS = 15; //Par défaut : 15
 
     //pour les fichiers CSV
     final char SEPARATEUR = ';';
@@ -342,5 +342,23 @@ class QuestionACombatMultiples extends Program {
                 quitter = true;
             }
         }
+    }
+
+//----------------
+// -> Assertions
+//----------------
+
+    void testPoserQuestion(){
+
+        Question[] questionsTest = csvToQuestionTab("ressources/Questions/Template.csv");
+        //le tableau questionsTest contient deux questions (voir le fichier ressource/Questions/Template.csv)
+
+        poserQuestion(questionsTest);
+        poserQuestion(questionsTest);
+        //on a posé deux questions pour "vider" le tableau (mettre tous les .dejaPosee des questions à true)
+        //cela permet de vérifier que les questions ne sont pas posées deux fois puisque sinon le tableau ne serait pas "vide" à la fin
+
+        assertEquals(-1,poserQuestion(questionsTest));
+        //on vérifie que la fonction retourne bien -1 (ce qui signifie qu'il ne reste plus aucune question)
     }
 }
