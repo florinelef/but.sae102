@@ -425,13 +425,12 @@ class QuestionACombatMultiples extends Program {
                     clearScreen();
 
                     if(joueur.stats[0] <= 0){
+                        statsJ(joueur);
                         afficher("defaite");
                     } else {
-                        afficher("victoire");
                         statsJ(joueur);
+                        afficher("victoire");
                     }
-
-                    println("\nAppuyez sur entrée pour continuer");
                     readString();
                 }
 
