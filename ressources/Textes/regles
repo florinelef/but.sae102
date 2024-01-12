@@ -1,1 +1,27 @@
-Règles à faire !!
+Bienvenue dans Question A Combat Multiples !
+
+Pour commencer une partie, écrivez "1" ou "Jouer" dans le menu.
+Vous aurez ensuite le choix de continuer la partie, ou d'en commencer une nouvelle.
+
+Déroulement d'une partie :
+
+Le jeu est composé de 15 boss que vous allez devoir vaincre 1 par 1 en suivant votre histoire.
+Vous commencez avec 100 points de vie (PV) et 5 d'attaque (ATT), quand vous tombez à 0 point de vie, vous perdez. Les boss ont aussi chacun des points de vie et d'attaque.
+
+Quand ils vous posent une question, si vous répondez correctement : 
+- vous faites perdre autant de point de vie au boss que vous avez de points d'attaque
+- et inversement si vous répondez faux (vous perdez autant de points de vie que le boss a d'attaque)
+
+Valeur combo :
+Lorsque vous enchaînez les bonnes réponses sans vous trompez, vous incrémentez votre "COMBO" de 1 par bonne réponse. Attention, si vous répondez faux à une question, cette valeur retourne à 0 !
+Cette valeur combo sera ajoutée à vos points d'attaque à chaque fin de tour !
+(ex: vous battez le boss n°5 avec 17 de combo, alors vous gagnez 17 points d'attaque !)
+
+Evènements bonus :
+Il existe des tours spéciaux où vous pouvez gagner de la vie ou de l'attaque (en rammasant un objet par exemple). Ces tours sont prévus par le jeu et l'évènement est expliqué dans l'histoire.
+
+Evènements aléatoire :
+Vous avez une faible chance de regagner votre vie après chaque fin de tour. (grâce à un objet spécial que vous trouverez)
+Vous avez une minime chance de donner un coup critique à votre adversaire, ce qui lui fera perdre 2 fois plus de points de vie !
+
+Appuyez sur Entrée pour continuer
