@@ -29,7 +29,7 @@ class QuestionACombatMultiples extends Program {
     final String MESSAGE_COUP_CRITIQUE = ANSI_YELLOW + "Coup critique !\n" + ANSI_RESET;
     final String MESSAGE_BONUS = ANSI_GREEN + "Vous trouvez un blanc co pour effacer vos blessures, vous regagnez 25 PV." + ANSI_RESET;
 
-    final String MOT_SKIP = "dbgskp";
+    final String MOT_SKIP = "passer";
 
 //-------------------
 // -> Type Question
@@ -79,6 +79,8 @@ class QuestionACombatMultiples extends Program {
         return j;
     }
 
+    
+    //Créer un joueur à partie des données de la sauvegarde
     Joueur newJoueurContinue(String prenom, int[] stats, int score){
         Joueur j = new Joueur();
         j.prenom = prenom;
@@ -87,6 +89,7 @@ class QuestionACombatMultiples extends Program {
         return j;
     }
 
+    //retourne les infos du joueur sous forme de chaine de caractère
     String toString(Joueur j){
         return j.prenom + " : " + j.stats[0] + ANSI_RED +" PV" + ANSI_WHITE + " | " + j.stats[1] + ANSI_CYAN +" ATT" + ANSI_WHITE + " | " + j.stats[2] + ANSI_YELLOW + " COMBO" + ANSI_WHITE + " (Score : " + j.score + ")";
     }
@@ -108,6 +111,7 @@ class QuestionACombatMultiples extends Program {
         return b;
     }
 
+    //retourne les infos du boss sous forme de chaine de caractère
     String toString(Boss b){
         return b.nom + " : " + b.pdv + ANSI_RED +" PV" + ANSI_WHITE + " | " + b.att + ANSI_CYAN +" ATT" + ANSI_WHITE + " (Boss n°" + b.numBoss + ")";
     }
@@ -179,9 +183,9 @@ class QuestionACombatMultiples extends Program {
     }
 
 
-//---------------
-// -> Aléatoire
-//---------------
+//---------------------
+// -> Events Aléatoire
+//---------------------
 
     boolean coupCritique(){
         return random() <= TAUX_CHANCE_CRIT;
@@ -260,6 +264,63 @@ class QuestionACombatMultiples extends Program {
     int chargerTour(CSVFile save){
         return stringToInt(getCell(save, 1, 5));
     }
+
+//----------
+// -> Tour
+//----------
+
+    //procédure qui pose une question et traite la réponse du joueur
+    void jouerQuestion(Joueur joueur, Boss boss, Question[] questions){
+
+        //afficher stats
+        println();
+        statsJ(joueur);
+        statsB(boss);
+        println('\n' + boss.nom + " vous pose une question :");
+
+        //a faire condition perdre vie, gerer streak, actualiser vie et att etc
+        //cas : plus aucune question dispo
+        int resultat = poserQuestion(questions);
+        println();
+        if(resultat == -1){
+            println(MESSAGE_AUCUNE_QUESTION);
+            boss.pdv = 0;
+        } 
+        //cas : réponse fausse
+        else if(resultat == 0){
+            println(MESSAGE_MAUVAISE_REPONSE);
+            
+            joueur.stats[2] = 0; //reset streak
+            joueur.score -= 50; //actualisation score
+
+            joueur.stats[0] -= boss.att;
+            println("Vous avez perdu " + boss.att + ANSI_RED + " PV" + ANSI_WHITE);
+        }
+        //cas : réponse bonne
+        else if(resultat == 1){
+            println(MESSAGE_BONNE_REPONSE);
+
+            joueur.stats[2] += 1; //ajout 1 streak
+            joueur.score += 20; //actualisation score
+
+            if(coupCritique()){
+                println(MESSAGE_COUP_CRITIQUE);
+                boss.pdv -= (joueur.stats[1] * CM_CRIT);
+                println("Le boss a perdu " + (joueur.stats[1] * CM_CRIT) + ANSI_RED + " PV" + ANSI_WHITE);
+            } else {
+                boss.pdv -= joueur.stats[1];
+                println("Le boss a perdu " + joueur.stats[1] + ANSI_RED + " PV" + ANSI_WHITE);
+            }
+        } 
+        
+        //cas : skip
+        else {
+            println("SKIP effectué");
+            boss.pdv = 0;
+        }
+    }
+
+
 
 //-------------------------
 // -> Algorithme principal
@@ -346,55 +407,10 @@ class QuestionACombatMultiples extends Program {
 
                     println(boss.lore);
 
-                    //tant que le boss ou lae joueur.euse
+                    //tant que le boss ou lae joueur.euse est en vie
                     do{
                         boolean resetStreak = false;
-                        //afficher stats
-                        println();
-                        statsJ(joueur);
-                        statsB(boss);
-                        println('\n' + boss.nom + " vous pose une question :");
-
-                        //a faire condition perdre vie, gerer streak, actualiser vie et att etc
-                        //cas : plus aucune question dispo
-                        int resultat = poserQuestion(questions);
-                        println();
-                        if(resultat == -1){
-                            println(MESSAGE_AUCUNE_QUESTION);
-                            boss.pdv = 0;
-                        } 
-                        //cas : réponse fausse
-                        else if(resultat == 0){
-                            println(MESSAGE_MAUVAISE_REPONSE);
-                            
-                            joueur.stats[2] = 0; //reset streak
-                            joueur.score -= 50; //actualisation score
-
-                            joueur.stats[0] -= boss.att;
-                            println("Vous avez perdu " + boss.att + ANSI_RED + " PV" + ANSI_WHITE);
-                        }
-                        //cas : réponse bonne
-                        else if(resultat == 1){
-                            println(MESSAGE_BONNE_REPONSE);
-
-                            joueur.stats[2] += 1; //ajout 1 streak
-                            joueur.score += 20; //actualisation score
-
-                            if(coupCritique()){
-                                println(MESSAGE_COUP_CRITIQUE);
-                                boss.pdv -= (joueur.stats[1] * CM_CRIT);
-                                println("Le boss a perdu " + (joueur.stats[1] * CM_CRIT) + ANSI_RED + " PV" + ANSI_WHITE);
-                            } else {
-                                boss.pdv -= joueur.stats[1];
-                                println("Le boss a perdu " + joueur.stats[1] + ANSI_RED + " PV" + ANSI_WHITE);
-                            }
-                        } 
-                        
-                        //cas : skip
-                        else {
-                            println("SKIP effectué");
-                            boss.pdv = 0;
-                        }
+                        jouerQuestion(joueur, boss, questions);
 
                     } while(boss.pdv > 0 && joueur.stats[0] > 0);
 
