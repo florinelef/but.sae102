@@ -9,21 +9,25 @@ class QuestionACombatMultiples extends Program {
 
     final int VIES_JOUEUR = 100;
     final int ATT_JOUEUR = 5;
-    final int STREAK_JOUEUR = 0; //séries de question bien répondues
+    final int STREAK_JOUEUR = 0; //séries de question bien répondues (combo)
 
-    final double TAUX_CHANCE_CRIT = 0.0417;
+    final double TAUX_CHANCE_CRIT = 0.0417; //chance de mettre un coup critique
     final double TAUX_CHANCE_BONUS = 0.2; //chance d'avoir un bonus après un combat
 
-    final int CM_CRIT = 2;
+    final int CM_CRIT = 2; //coefficient multiplicateur du coup critique
 
-    final int NB_BOSS = 15; //Par défaut : 15
+    final int NB_BOSS = 15; //Nombre de boss - par défaut : 15
 
     //pour les fichiers CSV
     final char SEPARATEUR = ';';
+
+    //chemin/repertoire des fichiers
     final String CHEMIN_SAVE = "ressources/Save/save.csv";
     final String CHEMIN_BOSS = "ressources/Boss/Boss.csv";
     final String CHEMIN_REPERTOIRE_TEXTES = "ressources/Textes/";
-    final String MESSAGE_AUCUNE_QUESTION = "Le boss est mort d'inspiration car il n'avait plus de question à vous poser";
+
+    //messages
+    final String MESSAGE_AUCUNE_QUESTION = "Le boss a succombé de son manque d'inspiration... Il n'a plus de question à vous poser et choisit la fuite";
     final String MESSAGE_MAUVAISE_REPONSE = ANSI_RED + "Mauvaise réponse !\n" + ANSI_RESET;
     final String MESSAGE_BONNE_REPONSE = ANSI_GREEN + "Bonne réponse !\n" + ANSI_RESET;
     final String MESSAGE_COUP_CRITIQUE = ANSI_YELLOW + "Coup critique !\n" + ANSI_RESET;
@@ -55,6 +59,7 @@ class QuestionACombatMultiples extends Program {
         return res + '\n';
     }
 
+    //transforme un fichier csv en un tableau de questions
     Question[] csvToQuestionTab(String chemin){
         CSVFile fichier = loadCSV(chemin, SEPARATEUR);
         Question[] tab = new Question[rowCount(fichier)-1];
@@ -116,6 +121,7 @@ class QuestionACombatMultiples extends Program {
         return b.nom + " : " + b.pdv + ANSI_RED +" PV" + ANSI_WHITE + " | " + b.att + ANSI_CYAN +" ATT" + ANSI_WHITE + " (Boss n°" + b.numBoss + ")";
     }
 
+    //transforme un fichier csv en un tableau de boss
     Boss[] csvToBossTab(String chemin){
         CSVFile fichier = loadCSV(chemin, SEPARATEUR);
         Boss[] tab = new Boss[NB_BOSS];
@@ -151,7 +157,7 @@ class QuestionACombatMultiples extends Program {
         return numQuestionPossible[(int)(random()*lengthNQC)];
     }
 
-    // procedure qui pose une question et retourne -1 si aucune question dispo, 0 si réponse fausse, 1 si réponse correcte et 2 si skip
+    //procedure qui pose une question et retourne -1 si aucune question dispo, 0 si réponse fausse, 1 si réponse correcte et 2 si skip (utilisé dans jouerQuestion())
     int poserQuestion(Question[] questions){
         int numQuestion = tirageNumQuestion(questions);
         println();
@@ -181,93 +187,6 @@ class QuestionACombatMultiples extends Program {
         }
         return 0;
     }
-
-
-//---------------------
-// -> Events Aléatoire
-//---------------------
-
-    boolean coupCritique(){
-        return random() <= TAUX_CHANCE_CRIT;
-    }
-
-    boolean bonus(){
-        return random() <= TAUX_CHANCE_BONUS;
-    }
-
-//---------------------
-// -> Affichage
-//---------------------
-
-    void statsJ(Joueur j){
-        println(toString(j));
-    }
-
-    void statsB(Boss b){
-        println(toString(b));
-    }
-
-    void afficher(String chemin_court){
-        File f = newFile(CHEMIN_REPERTOIRE_TEXTES + chemin_court);
-        while(ready(f)){
-            println(readLine(f));
-        }
-    }
-
-    void afficherNouvellePartie(){
-        CSVFile save = loadCSV(CHEMIN_SAVE);
-
-        print("Voulez vous continuer la partie ?\n\n\n1 - Continuer : [");
-        println(
-            getCell(save, 1, 0)
-            + " - Boss n°"
-            + getCell(save, 1, 5)
-            + " : Points de vie "
-            + getCell(save, 1, 1)
-            + " / Attaque "
-            + getCell(save, 1, 2)
-            + " / Combo "
-            + getCell(save, 1, 3)
-            + " (score : "
-            + getCell(save, 1, 4)
-            + ")]"
-        );
-        print("2 - Nouvelle Partie\n\n\nRéponse : ");
-    }
-
-//----------------
-// -> Sauvegarde
-//----------------
-
-    void sauvegarder(Joueur joueur, int tour){
-
-        String[][] sauvegarde = new String[][]{
-            {"prenom","PV","ATT","streak","score","tour"},
-            {joueur.prenom, ""+joueur.stats[0], ""+joueur.stats[1], ""+joueur.stats[2], ""+joueur.score, ""+tour}
-        };
-
-        saveCSV(sauvegarde, CHEMIN_SAVE);
-    }
-
-    String chargerPrenom(CSVFile save){
-        return getCell(save, 1, 0);
-    }
-
-    int[] chargerStats(CSVFile save){
-        return new int[]{stringToInt(getCell(save, 1, 1)), stringToInt(getCell(save, 1, 2)), stringToInt(getCell(save, 1, 3))};
-    }
-
-    int chargerScore(CSVFile save){
-        return stringToInt(getCell(save, 1, 4));
-    }
-
-    int chargerTour(CSVFile save){
-        return stringToInt(getCell(save, 1, 5));
-    }
-
-//----------
-// -> Tour
-//----------
 
     //procédure qui pose une question et traite la réponse du joueur
     void jouerQuestion(Joueur joueur, Boss boss, Question[] questions){
@@ -321,6 +240,92 @@ class QuestionACombatMultiples extends Program {
     }
 
 
+//---------------------
+// -> Events Aléatoire
+//---------------------
+
+    boolean coupCritique(){
+        return random() <= TAUX_CHANCE_CRIT;
+    }
+
+    boolean bonus(){
+        return random() <= TAUX_CHANCE_BONUS;
+    }
+
+//---------------------
+// -> Affichage
+//---------------------
+
+    void statsJ(Joueur j){
+        println(toString(j));
+    }
+
+    void statsB(Boss b){
+        println(toString(b));
+    }
+
+    //affiche n'importe quel fichier texte provenant du repertoire CHEMIN_REPERTOIRE_TEXTES
+    void afficher(String chemin_court){
+        File f = newFile(CHEMIN_REPERTOIRE_TEXTES + chemin_court);
+        while(ready(f)){
+            println(readLine(f));
+        }
+    }
+
+    //affiche le deuxieme menu (après avoir choisi Jouer dans le menu principal) qui demande au joueur s'il veut continuer ou recommencer une partie
+    void afficherNouvellePartie(){
+        CSVFile save = loadCSV(CHEMIN_SAVE);
+
+        print("Voulez vous continuer la partie ?\n\n\n1 - Continuer : [");
+        println(
+            getCell(save, 1, 0)
+            + " - Boss n°"
+            + getCell(save, 1, 5)
+            + " : Points de vie "
+            + getCell(save, 1, 1)
+            + " / Attaque "
+            + getCell(save, 1, 2)
+            + " / Combo "
+            + getCell(save, 1, 3)
+            + " (score : "
+            + getCell(save, 1, 4)
+            + ")]"
+        );
+        print("2 - Nouvelle Partie\n\n\nRéponse : ");
+    }
+
+//----------------
+// -> Sauvegarde
+//----------------
+
+    //sauvegarde la partie dans un fichier texte
+    void sauvegarder(Joueur joueur, int tour){
+
+        String[][] sauvegarde = new String[][]{
+            {"prenom","PV","ATT","streak","score","tour"},
+            {joueur.prenom, ""+joueur.stats[0], ""+joueur.stats[1], ""+joueur.stats[2], ""+joueur.score, ""+tour}
+        };
+
+        saveCSV(sauvegarde, CHEMIN_SAVE);
+    }
+
+
+    //les 4 fonctions suivantes permettent de charger les éléments d'une partie (infos du joueur + tour) 
+    String chargerPrenom(CSVFile save){
+        return getCell(save, 1, 0);
+    }
+
+    int[] chargerStats(CSVFile save){
+        return new int[]{stringToInt(getCell(save, 1, 1)), stringToInt(getCell(save, 1, 2)), stringToInt(getCell(save, 1, 3))};
+    }
+
+    int chargerScore(CSVFile save){
+        return stringToInt(getCell(save, 1, 4));
+    }
+
+    int chargerTour(CSVFile save){
+        return stringToInt(getCell(save, 1, 5));
+    }
 
 //-------------------------
 // -> Algorithme principal
