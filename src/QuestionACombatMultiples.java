@@ -213,7 +213,7 @@ class QuestionACombatMultiples extends Program {
     void afficherNouvellePartie(){
         CSVFile save = loadCSV(CHEMIN_SAVE);
 
-        print("Voulez vous continuer la partie ?\n\n\n1 - Continuer : ");
+        print("Voulez vous continuer la partie ?\n\n\n1 - Continuer : [");
         println(
             getCell(save, 1, 0)
             + " - Boss n°"
@@ -226,7 +226,7 @@ class QuestionACombatMultiples extends Program {
             + getCell(save, 1, 3)
             + " (score : "
             + getCell(save, 1, 4)
-            + ")"
+            + ")]"
         );
         print("2 - Nouvelle Partie\n\n\nRéponse : ");
     }
